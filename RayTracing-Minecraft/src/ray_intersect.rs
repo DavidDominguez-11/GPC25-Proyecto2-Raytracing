@@ -50,6 +50,6 @@ impl Intersect {
     }
 }
 
-pub trait RayIntersect {
+pub trait RayIntersect: Send + Sync {
     fn ray_intersect(&self, ray_origin: &Vector3, ray_direction: &Vector3) -> Intersect;
 }

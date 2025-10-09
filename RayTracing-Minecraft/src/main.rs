@@ -14,6 +14,7 @@ mod material;
 mod light;
 mod snell;
 mod textures;
+mod slab;
 use framebuffer::Framebuffer;
 use ray_intersect::{RayIntersect, Intersect};
 use cube::Cube;
@@ -22,6 +23,7 @@ use material::{Material, vector3_to_color};
 use light::Light;
 use snell::{reflect, refract};
 use textures::TextureManager;
+use slab::Slab;
 
 fn procedural_sky(dir: Vector3) -> Vector3 {
     let d = dir.normalized();
@@ -54,7 +56,7 @@ fn procedural_sky(dir: Vector3) -> Vector3 {
 fn cast_shadow(
     intersect: &Intersect,
     light: &Light,
-    objects: &[Cube], //poner sphere si se quiere usar esferas
+    objects: &[Box<dyn RayIntersect>], //poner sphere si se quiere usar esferas
 ) -> f32 {
     let light_direction = (light.position - intersect.point).normalized();
     let shadow_ray_origin = intersect.point + intersect.normal * 0.001; // Bias para evitar auto-intersección
@@ -80,7 +82,7 @@ fn offset_origin(intersect: &Intersect, ray_direction: &Vector3) -> Vector3 {
 pub fn cast_ray(
     ray_origin: &Vector3,
     ray_direction: &Vector3,
-    objects: &[Cube], //poner sphere si se quiere usar esferas
+    objects: &[Box<dyn RayIntersect>], //poner sphere si se quiere usar esferas
     light: &Light,
     depth: u32,
     texture_manager: &TextureManager,
@@ -178,7 +180,7 @@ pub fn cast_ray(
 pub fn render(
     width: i32,
     height: i32,
-    objects: &[Cube],
+    objects: &[Box<dyn RayIntersect>],
     camera: &Camera,
     light: &Light,
     texture_manager: &TextureManager,
@@ -262,13 +264,37 @@ fn main() {
         texture: Some("assets/deepslateBLOCK.png".to_string()), normal_map_id: None,
     };
 
-    let objects = [
-        Cube::new(Vector3::new(-2.5, 0.0, 0.0), 1.0, top_end_portal_eye.clone()),
-        Cube::new(Vector3::new(-1.5, 0.0, 0.0), 1.0, purpur_block.clone()),
-        Cube::new(Vector3::new(-0.5, 0.0, 0.0), 1.0, lat_end_portal.clone()),
-        Cube::new(Vector3::new(0.5, 0.0, 0.0),  1.0, en_portal.clone()),
-        Cube::new(Vector3::new(1.5, 0.0, 0.0), 1.0, end_block.clone()),
-        Cube::new(Vector3::new(2.5, 0.0, 0.0), 1.0, deeslate_block.clone()),
+    // para el slab
+    let stone_slab_mat = Material {
+        diffuse: Vector3::new(0.6, 0.6, 0.6),
+        albedo: [0.8, 0.2],
+        specular: 5.0,
+        reflectivity: 0.02,
+        transparency: 0.0,
+        refractive_index: 1.0,
+        texture: Some("assets/deepslateBLOCK.png".to_string()), // o crea una textura específica
+        normal_map_id: None,
+    };
+    let end_stone_slab_mat = Material {
+        diffuse: Vector3::new(0.6, 0.6, 0.6),
+        albedo: [0.8, 0.2],
+        specular: 5.0,
+        reflectivity: 0.02,
+        transparency: 0.0,
+        refractive_index: 1.0,
+        texture: Some("assets/ENDBLOCK.png".to_string()), // o crea una textura específica
+        normal_map_id: None,
+    };
+
+    let objects: Vec<Box<dyn RayIntersect>> = vec![
+        Box::new(Cube::new(Vector3::new(-2.5, 0.0, 0.0), 1.0, top_end_portal_eye.clone())),
+        Box::new(Cube::new(Vector3::new(-1.5, 0.0, 0.0), 1.0, purpur_block.clone())),
+        Box::new(Cube::new(Vector3::new(-0.5, 0.0, 0.0), 1.0, lat_end_portal.clone())),
+        Box::new(Cube::new(Vector3::new(0.5, 0.0, 0.0),  1.0, en_portal.clone())),
+        Box::new(Cube::new(Vector3::new(1.5, 0.0, 0.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(2.5, 0.0, 0.0), 1.0, deeslate_block.clone())),
+        Box::new(Slab::new(Vector3::new(3.5, 0.0, 0.0), 1.0, stone_slab_mat.clone())),
+        Box::new(Slab::new(Vector3::new(4.5, 0.0, 0.0), 1.0, end_stone_slab_mat.clone())),
     ];
     let mut camera = Camera::new(
         Vector3::new(0.0, 0.0, 8.0), //Posicion de la camara
