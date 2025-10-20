@@ -15,6 +15,8 @@ mod light;
 mod snell;
 mod textures;
 mod slab;
+mod block2;
+use block2::TexturedBlock;
 use framebuffer::Framebuffer;
 use ray_intersect::{RayIntersect, Intersect};
 use cube::Cube;
@@ -135,17 +137,35 @@ pub fn cast_ray(
     
     // Difuso
     let diffuse_intensity = normal.dot(light_direction).max(0.0) * light_intensity;
-    let diffuse_color = if let Some(texture_path) = &intersect.material.texture {
+
+
+    let diffuse_color = if intersect.top_bottom_texture.is_some() {
+        // Es un TexturedBlock
+        let texture_path = if normal.y.abs() > 0.5 {
+            intersect.top_bottom_texture.as_ref().unwrap()
+        } else {
+            intersect.side_texture.as_ref().unwrap()
+        };
         let texture = texture_manager.get_texture(texture_path).unwrap();
         let width = texture.width() as u32;
         let height = texture.height() as u32;
         let tx = (intersect.u * width as f32) as u32;
         let ty = (intersect.v * height as f32) as u32;
-        let color = texture_manager.get_pixel_color(texture_path, tx, ty);
-        color
+        texture_manager.get_pixel_color(texture_path, tx, ty)
+    } else if let Some(texture_path) = &intersect.material.texture {
+        // Es un Cube o Slab con textura uniforme
+        let texture = texture_manager.get_texture(texture_path).unwrap();
+        let width = texture.width() as u32;
+        let height = texture.height() as u32;
+        let tx = (intersect.u * width as f32) as u32;
+        let ty = (intersect.v * height as f32) as u32;
+        texture_manager.get_pixel_color(texture_path, tx, ty)
     } else {
+        // Sin textura
         intersect.material.diffuse
     };
+
+
     let diffuse = diffuse_color * diffuse_intensity;
     
     // Especular
@@ -233,6 +253,10 @@ fn main() {
     texture_manager.load_texture(&mut window, &raylib_thread, "assets/ENDBLOCK.png");
     texture_manager.load_texture(&mut window, &raylib_thread, "assets/deepslateBLOCK.png");
     
+    // textura de block 2
+    //texture_manager.load_texture(&mut window, &raylib_thread, "assets/TOPENDPORTALwEYE.png");
+    //texture_manager.load_texture(&mut window, &raylib_thread, "assets/LATENDPORTAL.png");
+    
     let top_end_portal_eye = Material {
         diffuse: Vector3::new(1.0, 1.0, 1.0), albedo: [0.7, 0.3], specular: 30.0,
         reflectivity: 0.1, transparency: 0.0, refractive_index: 1.0,
@@ -285,16 +309,34 @@ fn main() {
         texture: Some("assets/ENDBLOCK.png".to_string()), // o crea una textura específica
         normal_map_id: None,
     };
+    // Crea un material base (texture debe ser None)
+    let block2_material = Material {
+        diffuse: Vector3::new(1.0, 1.0, 1.0),
+        albedo: [0.8, 0.2],
+        specular: 10.0,
+        reflectivity: 0.05,
+        transparency: 0.0,
+        refractive_index: 1.0,
+        texture: None, // ¡Importante!
+        normal_map_id: None,
+    };
 
     let objects: Vec<Box<dyn RayIntersect>> = vec![
-        Box::new(Cube::new(Vector3::new(-2.5, 0.0, 0.0), 1.0, top_end_portal_eye.clone())),
+        //Box::new(Cube::new(Vector3::new(-2.5, 0.0, 0.0), 1.0, top_end_portal_eye.clone())),
         Box::new(Cube::new(Vector3::new(-1.5, 0.0, 0.0), 1.0, purpur_block.clone())),
-        Box::new(Cube::new(Vector3::new(-0.5, 0.0, 0.0), 1.0, lat_end_portal.clone())),
+        //Box::new(Cube::new(Vector3::new(-0.5, 0.0, 0.0), 1.0, lat_end_portal.clone())),
         Box::new(Cube::new(Vector3::new(0.5, 0.0, 0.0),  1.0, en_portal.clone())),
         Box::new(Cube::new(Vector3::new(1.5, 0.0, 0.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(2.5, 0.0, 0.0), 1.0, deeslate_block.clone())),
         Box::new(Slab::new(Vector3::new(3.5, 0.0, 0.0), 1.0, stone_slab_mat.clone())),
         Box::new(Slab::new(Vector3::new(4.5, 0.0, 0.0), 1.0, end_stone_slab_mat.clone())),
+        Box::new(TexturedBlock::new(
+            Vector3::new(5.5, 0.0, 0.0),
+            1.0,
+            "assets/TOPENDPORTALwEYE.png".to_string(),
+            "assets/LATENDPORTAL.png".to_string(),
+            block2_material.clone(),
+        )),
     ];
     let mut camera = Camera::new(
         Vector3::new(0.0, 0.0, 8.0), //Posicion de la camara
