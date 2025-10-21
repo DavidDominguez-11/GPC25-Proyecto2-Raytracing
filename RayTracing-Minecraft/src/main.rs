@@ -254,10 +254,6 @@ fn main() {
     texture_manager.load_texture(&mut window, &raylib_thread, "assets/deepslateBLOCK.png");
     texture_manager.load_texture(&mut window, &raylib_thread, "assets/OBSIDIAN.png");
     
-    // textura de block 2
-    //texture_manager.load_texture(&mut window, &raylib_thread, "assets/TOPENDPORTALwEYE.png");
-    //texture_manager.load_texture(&mut window, &raylib_thread, "assets/LATENDPORTAL.png");
-    
     let top_end_portal_eye = Material {
         diffuse: Vector3::new(1.0, 1.0, 1.0), albedo: [0.7, 0.3], specular: 30.0,
         reflectivity: 0.1, transparency: 0.0, refractive_index: 1.0,
@@ -295,14 +291,24 @@ fn main() {
     };
 
     // para el slab
-    let stone_slab_mat = Material {
+    let portal_slab = Material {
         diffuse: Vector3::new(0.6, 0.6, 0.6),
         albedo: [0.8, 0.2],
         specular: 5.0,
         reflectivity: 0.02,
         transparency: 0.0,
         refractive_index: 1.0,
-        texture: Some("assets/deepslateBLOCK.png".to_string()), // o crea una textura específica
+        texture: Some("assets/ENDPORTAL.png".to_string()), // o crea una textura específica
+        normal_map_id: None,
+    };
+    let purpur_slab = Material {
+        diffuse: Vector3::new(0.6, 0.6, 0.6),
+        albedo: [0.8, 0.2],
+        specular: 5.0,
+        reflectivity: 0.02,
+        transparency: 0.0,
+        refractive_index: 1.0,
+        texture: Some("assets/PURPURBLOCK.png".to_string()), // o crea una textura específica
         normal_map_id: None,
     };
     let end_stone_slab_mat = Material {
@@ -328,24 +334,9 @@ fn main() {
     };
 
     let objects: Vec<Box<dyn RayIntersect>> = vec![
+        
         /*
-        Box::new(Cube::new(Vector3::new(-2.5, 0.0, 0.0), 1.0, obsidian_block.clone())),
-        Box::new(Cube::new(Vector3::new(-1.5, 0.0, 0.0), 1.0, purpur_block.clone())),
-        Box::new(Cube::new(Vector3::new(0.0, -3.0, 0.0), 1.0, lat_end_portal.clone())),
-        Box::new(Cube::new(Vector3::new(0.5, 0.0, 0.0),  1.0, en_portal.clone())),
-        Box::new(Cube::new(Vector3::new(1.5, 0.0, 0.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(2.5, 0.0, 0.0), 1.0, deeslate_block.clone())),
-        Box::new(Slab::new(Vector3::new(3.5, 0.0, 0.0), 1.0, stone_slab_mat.clone())),
-        Box::new(Slab::new(Vector3::new(4.5, 0.0, 0.0), 1.0, end_stone_slab_mat.clone())),
-        Box::new(TexturedBlock::new(
-            Vector3::new(5.5, 0.0, 0.0),
-            1.0,
-            "assets/TOPENDPORTALwEYE.png".to_string(),
-            "assets/LATENDPORTAL.png".to_string(),
-            block2_material.clone(),
-        )),
         */
-
         //PORTal del END
         Box::new(TexturedBlock::new(
             Vector3::new(-4.0, 0.0, -1.0),
@@ -368,7 +359,7 @@ fn main() {
             "assets/LATENDPORTAL.png".to_string(),
             block2_material.clone(),
         )),
-
+        
         Box::new(TexturedBlock::new(
             Vector3::new(-1.0, 0.0, -2.0),
             1.0,
@@ -390,7 +381,7 @@ fn main() {
             "assets/LATENDPORTAL.png".to_string(),
             block2_material.clone(),
         )),
-
+        
         Box::new(TexturedBlock::new(
             Vector3::new(-2.0, 0.0, -5.0),
             1.0,
@@ -412,7 +403,7 @@ fn main() {
             "assets/LATENDPORTAL.png".to_string(),
             block2_material.clone(),
         )),
-
+        
         Box::new(TexturedBlock::new(
             Vector3::new(-5.0, 0.0, -4.0),
             1.0,
@@ -434,7 +425,7 @@ fn main() {
             "assets/LATENDPORTAL.png".to_string(),
             block2_material.clone(),
         )),
-
+        
         //RELLENO
         Box::new(Cube::new(Vector3::new(-2.0, 0.0, -2.0),  1.0, en_portal.clone())),
         Box::new(Cube::new(Vector3::new(-3.0, 0.0, -2.0),  1.0, en_portal.clone())),
@@ -447,9 +438,9 @@ fn main() {
         Box::new(Cube::new(Vector3::new(-2.0, 0.0, -4.0),  1.0, en_portal.clone())),
         Box::new(Cube::new(Vector3::new(-3.0, 0.0, -4.0),  1.0, en_portal.clone())),
         Box::new(Cube::new(Vector3::new(-4.0, 0.0, -4.0),  1.0, en_portal.clone())),
-
+        
         //PORTal del END
-
+        
         // ISLA
         Box::new(Cube::new(Vector3::new(6.0, 0.0, 2.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(7.0, 0.0, 2.0), 1.0, end_block.clone())),
@@ -463,10 +454,11 @@ fn main() {
         
         
         Box::new(Cube::new(Vector3::new(4.0, 0.0, 0.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(5.0, 0.0, 0.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(5.0, 1.0, 0.0), 1.0, obsidian_block.clone())),
         Box::new(Cube::new(Vector3::new(6.0, 0.0, 0.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(7.0, 0.0, 0.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(8.0, 0.0, 0.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(8.0, 1.0, 0.0), 1.0, obsidian_block.clone())),
+        Box::new(Cube::new(Vector3::new(8.0, 2.0, 0.0), 1.0, obsidian_block.clone())),
         Box::new(Cube::new(Vector3::new(9.0, 0.0, 0.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(10.0, 0.0, 0.0), 1.0, end_block.clone())),
         
@@ -481,10 +473,10 @@ fn main() {
         Box::new(Cube::new(Vector3::new(11.0, 0.0, -1.0), 1.0, end_block.clone())),
         
         Box::new(Cube::new(Vector3::new(3.0, 0.0, -2.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(4.0, 0.0, -2.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(4.0, 1.0, -2.0), 1.0, obsidian_block.clone())),
         Box::new(Cube::new(Vector3::new(5.0, 0.0, -2.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(6.0, 0.0, -2.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(7.0, 0.0, -2.0), 1.0, end_block.clone())),
+        Box::new(Slab::new(Vector3::new(7.0, 0.8, -2.0), 1.0, portal_slab.clone())),
         Box::new(Cube::new(Vector3::new(8.0, 0.0, -2.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(9.0, 0.0, -2.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(10.0, 0.0, -2.0), 1.0, end_block.clone())),
@@ -503,7 +495,8 @@ fn main() {
         
         
         Box::new(Cube::new(Vector3::new(4.0, 0.0, -4.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(5.0, 0.0, -4.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(5.0, 1.0, -4.0), 1.0, obsidian_block.clone())),
+        Box::new(Cube::new(Vector3::new(5.0, 2.0, -4.0), 1.0, obsidian_block.clone())),
         Box::new(Cube::new(Vector3::new(6.0, 0.0, -4.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(7.0, 0.0, -4.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(8.0, 0.0, -4.0), 1.0, end_block.clone())),
@@ -516,13 +509,26 @@ fn main() {
         Box::new(Cube::new(Vector3::new(6.0, 0.0, -3.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(7.0, 0.0, -3.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(8.0, 0.0, -3.0), 1.0, end_block.clone())),
-        Box::new(Cube::new(Vector3::new(9.0, 0.0, -3.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(9.0, 1.0, -3.0), 1.0, obsidian_block.clone())),
+        Box::new(Cube::new(Vector3::new(9.0, 2.0, -3.0), 1.0, obsidian_block.clone())),
+        Box::new(Cube::new(Vector3::new(9.0, 3.0, -3.0), 1.0, obsidian_block.clone())),
         Box::new(Cube::new(Vector3::new(10.0, 0.0, -3.0), 1.0, end_block.clone())),
         Box::new(Cube::new(Vector3::new(11.0, 0.0, -3.0), 1.0, end_block.clone())),
-
-
         // ISLA
+        
+        // BLOQUES EXTRA
+        Box::new(Cube::new(Vector3::new(13.0, 3.0, 0.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(13.0, 3.0, -1.0), 1.0, end_block.clone())),
+        
+        Box::new(Cube::new(Vector3::new(13.0, 4.0, -5.0), 1.0, end_block.clone())),
+        Box::new(Cube::new(Vector3::new(12.0, 4.0, -5.0), 1.0, end_block.clone())),
 
+        Box::new(Cube::new(Vector3::new(3.0, 3.0, -6.0), 1.0, purpur_block.clone())),
+        Box::new(Slab::new(Vector3::new(2.0, 3.0, -6.0), 1.0, purpur_slab.clone())),
+        
+        Box::new(Slab::new(Vector3::new(9.0, 3.0, -8.0), 1.0, purpur_slab.clone())),
+        Box::new(Slab::new(Vector3::new(8.0, 3.0, -8.0), 1.0, purpur_slab.clone())),
+        // BLOQUES EXTRA
 
     ];
     let mut camera = Camera::new(
