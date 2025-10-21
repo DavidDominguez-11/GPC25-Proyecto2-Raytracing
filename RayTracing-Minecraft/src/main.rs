@@ -271,7 +271,7 @@ fn main() {
     };
     let en_portal = Material {
         diffuse: Vector3::new(0.2, 0.1, 0.4), albedo: [0.5, 0.5], specular: 50.0,
-        reflectivity: 0.2, transparency: 0.5, refractive_index: 1.3,
+        reflectivity: 0.2, transparency: 0.2, refractive_index: 1.3,
         texture: Some("assets/ENDPORTAL.png".to_string()), normal_map_id: None,
     };
     let end_block = Material {
