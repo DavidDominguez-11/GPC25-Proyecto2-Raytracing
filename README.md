@@ -22,6 +22,10 @@ Este proyecto implementa un **ray tracer en Rust** que renderiza un diorama insp
 - **Efectos de portal**: Texturas especiales y materiales transparentes/reflectivos que simulan el efecto de portal
 - **Reflexión**: Bloques de portal con `reflectivity = 0.15-0.2`
 
+<img width="1156" height="672" alt="Captura de pantalla 2025-10-24 185519" src="https://github.com/user-attachments/assets/775c0191-d2f2-4a14-964c-5cf81df57bd8" />
+<img width="1156" height="672" alt="Captura de pantalla 2025-10-24 185519" src="https://github.com/user-attachments/assets/52c0396d-d792-43db-a0cb-a14488fd1f05" />
+<img width="1156" height="672" alt="Captura de pantalla 2025-10-24 185519" src="https://github.com/user-attachments/assets/40195aaa-2436-401f-96bd-bff1c11c2812" />
+
 ### Materiales Implementados
 
 | Material | Textura | Albedo | Specular | Reflectividad | Transparencia | Índice de Refracción |
@@ -34,8 +38,8 @@ Este proyecto implementa un **ray tracer en Rust** que renderiza un diorama insp
 | **Deepslate** | `deepslateBLOCK.png` | `[0.8, 0.2]` | `5.0` | `0.02` | `0.0` | `1.0` |
 
 ### Video Demostración
+[![Ver Video](https://img.shields.io/badge/YouTube-Video%20de%20Demostración-red?logo=youtube)](https://youtu.be/GisZVV2Koic)
 
-[![Raytracing Demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/TU_VIDEO_AQUI)
 
 ## Controles
 
